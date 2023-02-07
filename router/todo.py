@@ -12,7 +12,7 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 # POST Routes
 
 
-@router.post("/", response_model=ShowTodoSchema)
+@router.post("/", response_model=ShowTodoSchema, status_code=status.HTTP_201_CREATED)
 def create(request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -26,7 +26,7 @@ def create(request: TodoSchema, db: Session = Depends(get_database_session), cur
 # GET Routes
 
 
-@router.get("/", response_model=list[ShowTodoSchema])
+@router.get("/", response_model=list[ShowTodoSchema], status_code=status.HTTP_200_OK)
 def read_todo_list(db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -36,7 +36,7 @@ def read_todo_list(db: Session = Depends(get_database_session), current_user: Us
     return todo_list
 
 
-@router.get("/{id}", response_model=ShowTodoSchema)
+@router.get("/{id}", response_model=ShowTodoSchema, status_code=status.HTTP_200_OK)
 def read_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -49,7 +49,7 @@ def read_todo(id: int, db: Session = Depends(get_database_session), current_user
     return todo_item.first()
 
 
-@router.put("/{id}", response_model=ShowTodoSchema)
+@router.put("/{id}", response_model=ShowTodoSchema, status_code=status.HTTP_202_ACCEPTED)
 def update_todo(id: int, request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -64,7 +64,7 @@ def update_todo(id: int, request: TodoSchema, db: Session = Depends(get_database
     return item.first()
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()

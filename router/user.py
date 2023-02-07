@@ -9,7 +9,7 @@ from utils import validate_email
 router = APIRouter(tags=["User"], prefix="/user")
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(request: UserSchema, db: Session = Depends(get_database_session)):
     try:
         if not validate_email(request.email):

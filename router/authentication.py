@@ -9,7 +9,7 @@ from hashing import verify as verify_hash
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post('/login')
+@router.post('/login', status_code=status.HTTP_200_OK)
 def login(request: AuthSchema, db: Session = Depends(get_database_session)):
     user = db.query(UserModel).filter(UserModel.email == request.email).first()
 
