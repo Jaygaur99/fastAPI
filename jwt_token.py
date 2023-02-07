@@ -8,6 +8,10 @@ ALGORITHM = "HS256"
 
 
 def create_access_token(data: dict):
+    """
+        Function to generate access token
+        For more info check docs here https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
+    """
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(hours=24)
     to_encode.update({"exp": expire})
@@ -16,6 +20,10 @@ def create_access_token(data: dict):
 
 
 def verify_token(token: str, credentials_exception: HTTPException):
+    """
+        Function to verify JWT Token
+        For more info check docs here https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
+    """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
