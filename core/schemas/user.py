@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from schemas.todo import ShowTodo
+from core.schemas.todo import ShowTodo
 
 
 class User(BaseModel):

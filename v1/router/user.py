@@ -4,11 +4,11 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_database_session
-from schemas.user import User as UserSchema, ShowUser as ShowUserSchema
-from models.user import User as UserModel
-from hashing import encrypt
-from utils import validate_email
+from services.database import get_database_session
+from core.schemas.user import User as UserSchema, ShowUser as ShowUserSchema
+from core.models.user import User as UserModel
+from services.hashing import encrypt
+from services.utils import validate_email
 
 router = APIRouter(tags=["User"], prefix="/user")
 

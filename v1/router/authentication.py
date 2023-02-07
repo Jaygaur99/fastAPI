@@ -4,11 +4,11 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_database_session
+from services.database import get_database_session
 from fastapi.security import OAuth2PasswordRequestForm
-from models.user import User as UserModel
-import jwt_token
-from hashing import verify as verify_hash
+from core.models.user import User as UserModel
+from services.jwt_token import create_access_token
+from services.hashing import verify as verify_hash
 
 router = APIRouter(tags=["Authentication"])
 
@@ -35,5 +35,5 @@ def login(
         )
 
     # JWT
-    access_token = jwt_token.create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}

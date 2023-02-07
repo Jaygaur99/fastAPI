@@ -4,12 +4,12 @@
 
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from schemas.todo import Todo as TodoSchema, ShowTodo as ShowTodoSchema
-from schemas.user import User as UserSchema
-from database import get_database_session
-from models.todo import Todo as TodoModel
-from models.user import User as UserModel
-import oauth2
+from core.schemas.todo import Todo as TodoSchema, ShowTodo as ShowTodoSchema
+from core.schemas.user import User as UserSchema
+from services.database import get_database_session
+from core.models.todo import Todo as TodoModel
+from core.models.user import User as UserModel
+from services import oauth2
 
 router = APIRouter(prefix="/todo", tags=["Todo"])
 

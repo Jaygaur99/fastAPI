@@ -1,11 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from router.todo import router as todo_router
-from router.user import router as user_router
-from router.authentication import router as auth_router
-from models import todo, user
-from database import engine
+from v1.router.todo import router as todo_router
+from v1.router.user import router as user_router
+from v1.router.authentication import router as auth_router
+from core.models import todo, user
+from services.database import engine
 
 app = FastAPI()
 
