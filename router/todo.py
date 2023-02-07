@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from schemas.todo import Todo as todo_schema
+from schemas.todo import Todo as TodoSchema
 from schemas.user import User as UserSchema
 from database import get_database_session
-from models.todo import Todo as todo_model
+from models.todo import Todo as TodoModel
 from models.user import User as UserModel
 import oauth2
 
@@ -13,10 +13,10 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 
 
 @router.post("/")
-def create(request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
+def create(request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
-    todo_item = todo_model(
+    todo_item = TodoModel(
         name=request.name, description=request.description, completed=request.completed, user_id=user.id)
     db.add(todo_item)
     db.commit()
@@ -30,8 +30,8 @@ def create(request: todo_schema, db: Session = Depends(get_database_session), cu
 def read_todo_list(db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
-    todo_list = db.query(todo_model).filter(
-        todo_model.user_id == user.id).all()
+    todo_list = db.query(TodoModel).filter(
+        TodoModel.user_id == user.id).all()
     # print(todo_list)
     return todo_list
 
@@ -40,8 +40,8 @@ def read_todo_list(db: Session = Depends(get_database_session), current_user: Us
 def read_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
-    todo_item = db.query(todo_model).filter(
-        todo_model.id == id, todo_model.user_id == user.id)
+    todo_item = db.query(TodoModel).filter(
+        TodoModel.id == id, TodoModel.user_id == user.id)
     if not todo_item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo item with id {id} not found"
@@ -50,11 +50,11 @@ def read_todo(id: int, db: Session = Depends(get_database_session), current_user
 
 
 @router.put("/{id}")
-def update_todo(id: int, request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
+def update_todo(id: int, request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
-    item = db.query(todo_model).filter(
-        todo_model.id == id, todo_model.user_id == user.id)
+    item = db.query(TodoModel).filter(
+        TodoModel.id == id, TodoModel.user_id == user.id)
     if not item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo Item with id {id} not found"
@@ -68,8 +68,8 @@ def update_todo(id: int, request: todo_schema, db: Session = Depends(get_databas
 def delete_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
-    todo_item = db.query(todo_model).filter(
-        todo_model.id == id, todo_model.user_id == user.id)
+    todo_item = db.query(TodoModel).filter(
+        TodoModel.id == id, TodoModel.user_id == user.id)
     if not todo_item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo item with id {id} not found"

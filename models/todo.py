@@ -13,3 +13,11 @@ class Todo(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="todos")
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.description}"
+
+    def __eq__(self, other: object) -> bool:
+        if (isinstance(other, Todo)):
+            return self.id == other.id
+        return False

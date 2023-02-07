@@ -12,3 +12,11 @@ class User(Base):
     password = Column(String(500))
 
     todos = relationship("Todo", back_populates="user")
+
+    def __str__(self) -> str:
+        return f"{self.email}"
+
+    def __eq__(self, other: object) -> bool:
+        if (isinstance(other, User)):
+            return self.id == other.id
+        return False
