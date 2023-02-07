@@ -4,6 +4,7 @@ from schemas.todo import Todo as todo_schema
 from schemas.user import User as UserSchema
 from database import get_database_session
 from models.todo import Todo as todo_model
+from models.user import User as UserModel
 import oauth2
 
 router = APIRouter(prefix="/todo", tags=["Todo"])
@@ -26,7 +27,11 @@ def create(request: todo_schema, db: Session = Depends(get_database_session), cu
 
 @router.get("/")
 def read_todo_list(db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
-    todo_list = db.query(todo_model).filter(todo_model.user_id)
+    user = db.query(UserModel).filter(
+        UserModel.email == current_user.email).first()
+    todo_list = db.query(todo_model).filter(
+        todo_model.user_id == user.id).all()
+    print(todo_list)
     return todo_list
 
 
