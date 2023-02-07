@@ -14,9 +14,10 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 
 @router.post("/")
 def create(request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
-
+    user = db.query(UserModel).filter(
+        UserModel.email == current_user.email).first()
     todo_item = todo_model(
-        name=request.name, description=request.description, completed=request.completed, user_id=1)
+        name=request.name, description=request.description, completed=request.completed, user_id=user.id)
     db.add(todo_item)
     db.commit()
     db.refresh(todo_item)
@@ -31,13 +32,16 @@ def read_todo_list(db: Session = Depends(get_database_session), current_user: Us
         UserModel.email == current_user.email).first()
     todo_list = db.query(todo_model).filter(
         todo_model.user_id == user.id).all()
-    print(todo_list)
+    # print(todo_list)
     return todo_list
 
 
 @router.get("/{id}")
 def read_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
-    todo_item = db.query(todo_model).filter(todo_model.id == id)
+    user = db.query(UserModel).filter(
+        UserModel.email == current_user.email).first()
+    todo_item = db.query(todo_model).filter(
+        todo_model.id == id, todo_model.user_id == user.id)
     if not todo_item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo item with id {id} not found"
@@ -47,7 +51,10 @@ def read_todo(id: int, db: Session = Depends(get_database_session), current_user
 
 @router.put("/{id}")
 def update_todo(id: int, request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
-    item = db.query(todo_model).filter(todo_model.id == id)
+    user = db.query(UserModel).filter(
+        UserModel.email == current_user.email).first()
+    item = db.query(todo_model).filter(
+        todo_model.id == id, todo_model.user_id == user.id)
     if not item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo Item with id {id} not found"
@@ -59,7 +66,10 @@ def update_todo(id: int, request: todo_schema, db: Session = Depends(get_databas
 
 @router.delete("/{id}")
 def delete_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
-    todo_item = db.query(todo_model).filter(todo_model.id == id)
+    user = db.query(UserModel).filter(
+        UserModel.email == current_user.email).first()
+    todo_item = db.query(todo_model).filter(
+        todo_model.id == id, todo_model.user_id == user.id)
     if not todo_item.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo item with id {id} not found"
