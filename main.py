@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from router.todo import router as todo_router
-from models import todo
+from models import todo, user
 from database import engine
 
 app = FastAPI()
 
 todo.Base.metadata.create_all(bind=engine)
+user.Base.metadata.create_all(bind=engine)
 
 app.include_router(todo_router)
 

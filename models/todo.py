@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 
 
@@ -9,3 +10,6 @@ class Todo(Base):
     name = Column(String(20))
     description = Column(String(100))
     completed = Column(Boolean)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    user = relationship("User", back_populates="todos")

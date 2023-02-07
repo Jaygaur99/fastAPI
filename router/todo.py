@@ -12,7 +12,7 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 @router.post("/")
 def create(request: todo_schema, db: Session = Depends(get_database_session)):
     todo_item = todo_model(
-        name=request.name, description=request.description, completed=request.completed)
+        name=request.name, description=request.description, completed=request.completed, user_id=1)
     db.add(todo_item)
     db.commit()
     db.refresh(todo_item)
