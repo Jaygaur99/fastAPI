@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from router.todo import router as todo_router
 from router.user import router as user_router
 from router.authentication import router as auth_router
@@ -17,6 +18,10 @@ app.include_router(todo_router)
 app.include_router(user_router)
 app.include_router(auth_router)
 
+
+@app.route("/")
+def home(request):
+    return RedirectResponse("/docs")
 
 # if __name__ == '__main__':
 #     uvicorn.run(port=8000, host="127.0.0.1", app=app)
