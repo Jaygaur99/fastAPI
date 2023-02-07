@@ -7,3 +7,7 @@ class AuthSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TokenData(BaseModel):
+    email: str | None = None

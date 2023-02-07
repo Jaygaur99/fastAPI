@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from schemas.todo import Todo as todo_schema
+from schemas.user import User as UserSchema
 from database import get_database_session
 from models.todo import Todo as todo_model
+import oauth2
 
 router = APIRouter(prefix="/todo", tags=["Todo"])
 
@@ -10,7 +12,8 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 
 
 @router.post("/")
-def create(request: todo_schema, db: Session = Depends(get_database_session)):
+def create(request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
+
     todo_item = todo_model(
         name=request.name, description=request.description, completed=request.completed, user_id=1)
     db.add(todo_item)
@@ -22,13 +25,13 @@ def create(request: todo_schema, db: Session = Depends(get_database_session)):
 
 
 @router.get("/")
-def read_todo_list(db: Session = Depends(get_database_session)):
-    todo_list = db.query(todo_model).all()
+def read_todo_list(db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
+    todo_list = db.query(todo_model).filter(todo_model.user_id)
     return todo_list
 
 
 @router.get("/{id}")
-def read_todo(id: int, db: Session = Depends(get_database_session)):
+def read_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     todo_item = db.query(todo_model).filter(todo_model.id == id)
     if not todo_item.first():
         raise HTTPException(
@@ -38,7 +41,7 @@ def read_todo(id: int, db: Session = Depends(get_database_session)):
 
 
 @router.put("/{id}")
-def update_todo(id: int, request: todo_schema, db: Session = Depends(get_database_session)):
+def update_todo(id: int, request: todo_schema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     item = db.query(todo_model).filter(todo_model.id == id)
     if not item.first():
         raise HTTPException(
@@ -50,7 +53,7 @@ def update_todo(id: int, request: todo_schema, db: Session = Depends(get_databas
 
 
 @router.delete("/{id}")
-def delete_todo(id: int, db: Session = Depends(get_database_session)):
+def delete_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     todo_item = db.query(todo_model).filter(todo_model.id == id)
     if not todo_item.first():
         raise HTTPException(
