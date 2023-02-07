@@ -11,11 +11,11 @@ router = APIRouter(tags=["User"], prefix="/user")
 
 @router.post("/", response_model=ShowUserTodoSchema)
 def create_user(request: UserSchema, db: Session = Depends(get_database_session)):
-    if not validate_email(request.email):
-        return HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email is not valid"
-        )
+    # if not validate_email(request.email):
+    #     return HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Email is not valid"
+    #     )
     hashed_password = encrypt(request.password)
     try:
         new_user = UserModel(
