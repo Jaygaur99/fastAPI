@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from schemas.todo import Todo as TodoSchema
+from schemas.todo import Todo as TodoSchema, ShowTodo as ShowTodoSchema
 from schemas.user import User as UserSchema
 from database import get_database_session
 from models.todo import Todo as TodoModel
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/todo", tags=["Todo"])
 # POST Routes
 
 
-@router.post("/")
+@router.post("/", response_model=ShowTodoSchema)
 def create(request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -26,7 +26,7 @@ def create(request: TodoSchema, db: Session = Depends(get_database_session), cur
 # GET Routes
 
 
-@router.get("/")
+@router.get("/", response_model=list[ShowTodoSchema])
 def read_todo_list(db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -36,7 +36,7 @@ def read_todo_list(db: Session = Depends(get_database_session), current_user: Us
     return todo_list
 
 
-@router.get("/{id}")
+@router.get("/{id}", response_model=ShowTodoSchema)
 def read_todo(id: int, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
@@ -49,7 +49,7 @@ def read_todo(id: int, db: Session = Depends(get_database_session), current_user
     return todo_item.first()
 
 
-@router.put("/{id}")
+@router.put("/{id}", response_model=ShowTodoSchema)
 def update_todo(id: int, request: TodoSchema, db: Session = Depends(get_database_session), current_user: UserSchema = Depends(oauth2.get_current_user)):
     user = db.query(UserModel).filter(
         UserModel.email == current_user.email).first()
