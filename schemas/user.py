@@ -19,7 +19,9 @@ class ShowUser(BaseModel):
         orm_mode = True
 
 
-class ShowUserTodo(ShowUser):
+class ShowUserTodo(BaseModel):
+    name: str
+    email: str
     todos: list[ShowTodo] = []
 
     class Config:
